@@ -7,9 +7,15 @@ const iconFiles = iconSizes.map((size) => `./icons/icon-${size}x${size}.png`);
 const staticFilesToPreCache = [
   "/",
   "/index.js",
-  "/favicon.ico",
   "/manifest.webmanifest",
-].concat(iconFiles);
+  "/index.html",
+  "/styles.css",
+  "/icons/icon-192x192.png",
+  "/icons/icon-512x512.png",
+  "/db.js",
+];
+
+/* .concat(iconFiles); */
 
 // install
 self.addEventListener("install", function (evt) {
@@ -44,7 +50,7 @@ self.addEventListener("activate", function (evt) {
 // fetch
 self.addEventListener("fetch", function (evt) {
   const { url } = evt.request;
-  if (url.includes("/all") || url.includes("/find")) {
+  if (url.includes("/api/transaction")) {
     evt.respondWith(
       caches
         .open(DATA_CACHE_NAME)
@@ -53,7 +59,7 @@ self.addEventListener("fetch", function (evt) {
             .then((response) => {
               // If the response was good, clone it and store it in the cache.
               if (response.status === 200) {
-                cache.put(evt.request, response.clone());
+                cache.put(evt.request.url, response.clone());
               }
 
               return response;
